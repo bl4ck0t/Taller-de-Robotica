@@ -1,4 +1,4 @@
-  #include "NXCDefs.h"
+#include "NXCDefs.h"
 #define VELOCITY 50
 #define WAIT_TIME 5000
 #define SEARCH_VELOCITY 100
@@ -25,10 +25,10 @@ task move_Cwheel(){
 task seek_enemy(){
      SetSensorLowspeed(IN_1);
      OnFwd(OUT_AC,70);
-     while(SensorUS(IN_1) > LIMIT){
+     //while(SensorUS(IN_1) > LIMIT){
          repeat(2){
              Precedes(move_Awheel, move_Cwheel);
-     }
+     //}
 }
 
 

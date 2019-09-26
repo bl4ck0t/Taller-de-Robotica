@@ -1,0 +1,51 @@
+  #include "NXCDefs.h"
+#define VELOCITY 50
+#define WAIT_TIME 5000
+#define SEARCH_VELOCITY 100
+#define LIMIT 8
+
+
+bool on_field(){
+     SetSensorColorFull(IN_4);
+     if(Sensor(IN_4)==INPUT_BLACKCOLOR)
+             return false;
+     else return true;
+
+}
+
+
+task move_Awheel(){
+     RotateMotor(OUT_A, VELOCITY,-720);
+}
+
+task move_Cwheel(){
+     RotateMotor(OUT_C, VELOCITY,720);
+}
+
+task seek_enemy(){
+     SetSensorLowspeed(IN_1);
+     OnFwd(OUT_AC,70);
+     while(SensorUS(IN_1) > LIMIT){
+         repeat(2){
+             Precedes(move_Awheel, move_Cwheel);
+     }
+}
+
+
+
+task main()
+{
+
+     bool enemy_found=false;
+     while(enemy_found == false)
+     enemy_found=seek_enemy();
+     
+     //if(enemy_found == true){
+     //RotateMotor(OUT_AC, VELOCITY,980);
+
+
+}
+
+
+
+

@@ -3,15 +3,6 @@
 #define WAIT_TIME 5000
 #define LIMIT 18
 
-task move_Awheel(){
-     OnRev(OUT_A, VELOCITY);
-}
-
-task move_Cwheel(){
-     OnRev(OUT_C, VELOCITY-50);
-}
-
-
 
 task grip(){
    OnFwd(OUT_B, VELOCITY);
@@ -20,16 +11,32 @@ task grip(){
 task foward(){
      OnRev(OUT_AC, VELOCITY);
 }
-task main(){
 
+
+task move_Awheel(){
+     RotateMotor(OUT_A, 100,-720);
+}
+
+task move_Cwheel(){
+     RotateMotor(OUT_C, 70,-720);
+}
+
+
+task main(){
+     //Precedes(move_Awheel,move_Cwheel);
      bool enemy = false;
+     RotateMotor(OUT_B, VELOCITY,-300);
      while(true){
      SetSensor(IN_2,SENSOR_TOUCH);
      SetSensorLowspeed(IN_1);
      SetSensorColorFull(IN_4);
-
+     Precedes(move_Awheel,move_Cwheel);
+     //OnRev(OUT_AC, VELOCITY);
+     until(Sensor(IN_4)==INPUT_BLACKCOLOR);
+     
      if(enemy == false){
-          Precedes(move_Awheel,move_Cwheel);
+          //Precedes(move_Awheel,move_Cwheel);
+          OnRev(OUT_AC, VELOCITY);
           if(Sensor(IN_4)==INPUT_BLACKCOLOR){
              OnFwd(OUT_AC, VELOCITY);
              until(Sensor(IN_4)!=INPUT_BLACKCOLOR);
@@ -38,10 +45,11 @@ task main(){
           
           if(SENSOR_2==1 || SensorUS(IN_1)<LIMIT){
             enemy = true;
+            RotateMotor(OUT_B, VELOCITY,-300);
           }
      }else{
           Precedes(grip,foward);
-          until(SENSOR_2==0 || Sensor(IN_4)==INPUT_BLACKCOLOR);
+          until( SENSOR_2==0  && SensorUS(IN_1)>LIMIT || Sensor(IN_4)==INPUT_BLACKCOLOR);
           enemy = false;
      }
    }

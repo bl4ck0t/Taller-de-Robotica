@@ -1,0 +1,48 @@
+#include "NXCDefs.h"
+#define VELOCITY 100
+#define WAIT_TIME 5000
+#define LIMIT 18
+
+task move_Awheel(){
+     OnRev(OUT_A, VELOCITY);
+}
+
+task move_Cwheel(){
+     OnRev(OUT_C, VELOCITY-50);
+}
+
+
+
+task grip(){
+   OnFwd(OUT_B, VELOCITY);
+}
+
+task foward(){
+     OnRev(OUT_AC, VELOCITY);
+}
+task main(){
+
+     bool enemy = false;
+     while(true){
+     SetSensor(IN_2,SENSOR_TOUCH);
+     SetSensorLowspeed(IN_1);
+     SetSensorColorFull(IN_4);
+
+     if(enemy == false){
+          Precedes(move_Awheel,move_Cwheel);
+          if(Sensor(IN_4)==INPUT_BLACKCOLOR){
+             OnFwd(OUT_AC, VELOCITY);
+             until(Sensor(IN_4)!=INPUT_BLACKCOLOR);
+             RotateMotor(OUT_AC, VELOCITY,1440);
+          }
+          
+          if(SENSOR_2==1 || SensorUS(IN_1)<LIMIT){
+            enemy = true;
+          }
+     }else{
+          Precedes(grip,foward);
+          until(SENSOR_2==0 || Sensor(IN_4)==INPUT_BLACKCOLOR);
+          enemy = false;
+     }
+   }
+}
